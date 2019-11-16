@@ -34,7 +34,7 @@ export class CategoryEditComponent extends BaseComponent {
   originalCategoryValue: string;
 
   availableCategories: string[] = [];
-  private categoryExists: boolean;
+  categoryExists: boolean;
 
   constructor(private ngRedux: NgRedux<any>,
               private router: Router) {
