@@ -19,11 +19,17 @@ import {staticDataReducer} from './store/reducers/static.data.reducer';
 import {dynamicDataReducer} from './store/reducers/dynamic.data.reducer';
 import {innerReducer} from './store/reducers/inner.data.reducer';
 import {HttpClientModule} from '@angular/common/http';
+import { CategoriesListComponent } from './pages/categories/list/categories-list.component';
+import {CategoryEditComponent} from './pages/categories/edit/category-edit.component';
+import { HeaderComponent } from './components/header/header.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MainPageComponent
+    MainPageComponent,
+    CategoriesListComponent,
+    CategoryEditComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,

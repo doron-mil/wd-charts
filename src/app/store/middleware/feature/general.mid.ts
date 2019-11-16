@@ -17,8 +17,18 @@ export class ReduxGeneralMiddlewareService {
     next(action);
 
     switch (action.type) {
-      case ActionTypesEnum.DUMMY_ACTION:
-        dispatch(ActionGenerator.setBasicData( true));
+      case ActionTypesEnum.SAVE_STORE:
+        const staticData = JSON.stringify(getState()[StoreDataTypeEnum.STATIC_DATA]);
+        localStorage.setItem('store', staticData);
+        break;
+      case ActionTypesEnum.RESTORE_STORE:
+        const restoredStaticStoreRawData = localStorage.getItem('store');
+        if (restoredStaticStoreRawData) {
+          const restoredStaticStoreData = JSON.parse(restoredStaticStoreRawData);
+          next(
+            ActionGenerator.restoreStore(restoredStaticStoreData)
+          );
+        }
         break;
     }
 

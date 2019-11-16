@@ -1,7 +1,13 @@
+import {PageAction, PageMetaData} from '../../model/innerData.model';
+
 export interface InnerDataState {
-  data: number;
+  pageData: PageMetaData;
+  lastEmittedAction: PageAction;
+  selectedCategory: string;
 }
 
 export const INITIAL_INNER_DATA_STATE: InnerDataState = {
-  data: 0
+  pageData: null,
+  lastEmittedAction: null,
+  selectedCategory: '',
 };

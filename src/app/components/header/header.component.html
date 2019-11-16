@@ -1,0 +1,65 @@
+<mat-toolbar class="main-toolbar">
+
+  <section class="">
+    <button mat-icon-button class="options"
+            [matMenuTriggerFor]="mainOptionsMenu">
+      <mat-icon>
+        <i class="material-icons">menu</i>
+      </mat-icon>
+    </button>
+
+    <mat-menu #mainOptionsMenu="matMenu" yPosition="above">
+      <ng-template matMenuContent>
+        <button mat-menu-item (click)="goMain()" [disabled]="isPage( 'mainPage' )">
+          <mat-icon>
+            <i class="material-icons">home</i>
+          </mat-icon>
+          <span>
+            Main Page
+          </span>
+        </button>
+
+        <button mat-menu-item (click)="goCategories()" [disabled]="isPage( 'categoriesList' )">
+          <mat-icon>
+            <i class="material-icons">category</i>
+          </mat-icon>
+          <span>
+            Categories
+          </span>
+        </button>
+
+        <mat-divider></mat-divider>
+
+        <button mat-menu-item (click)="saveStore()">
+          <mat-icon>
+            <i class="material-icons">save</i>
+          </mat-icon>
+          <span>
+            Save Store (4Dev)
+          </span>
+        </button>
+
+        <mat-divider *ngIf="getPageDataActions().length > 0"></mat-divider>
+        <button mat-menu-item *ngFor="let action of getPageDataActions()"
+                (click)="activateAction(action)">
+          <mat-icon>
+            <i class="material-icons">{{action.icon}}</i>
+          </mat-icon>
+          <span>
+            {{action.title}}
+          </span>
+        </button>
+
+      </ng-template>
+    </mat-menu>
+
+  </section>
+
+  <section>
+    <div class="page-name">
+      {{pageData?.name}}
+    </div>
+  </section>
+
+</mat-toolbar>
+

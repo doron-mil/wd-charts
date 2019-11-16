@@ -1,0 +1,20 @@
+<div class="categories-list-body">
+
+  <div class="categories-list-container mat-elevation-z8">
+
+    <div class="categories-list-header">
+      Available categories
+    </div>
+
+    <mat-list class="categories-list ">
+      <mat-list-item *ngFor="let category of categories" class="list-item-class"
+                     [ngClass]="{'selected-category': category === selectedCategory}"
+                     (click)="categoryWasSelected(category)">
+              <span style="text-align: center">
+                {{category }}
+              </span>
+      </mat-list-item>
+    </mat-list>
+
+  </div>
+</div>

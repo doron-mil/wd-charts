@@ -1,18 +1,9 @@
-@import "src/assets/styles/variables";
 
-.main-toolbar {
-  background-color: $header-color;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+.header-section {
   height: 8vh;
 }
 
-.main-display {
+.main-display-section {
   height: 92vh;
 }
 
-.options {
-  color: blue;
-  background-color: $header-color;
-}

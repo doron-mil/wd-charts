@@ -1,49 +1,11 @@
-<mat-toolbar class="main-toolbar">
+<div class="header-section">
 
-  <section class="">
-    <button mat-icon-button [matMenuTriggerFor]="mainOptionsMenu" class="options">
-      <mat-icon >
-        <i class="material-icons">menu</i>
-      </mat-icon>
-    </button>
+  <app-header></app-header>
 
-    <mat-menu #mainOptionsMenu="matMenu" yPosition="above">
-      <button mat-menu-item (click)="doNothing()">
-        <mat-icon >
-          <i class="material-icons">add</i>
-        </mat-icon>
-        <span>
-         Add
-        </span>
-      </button>
+</div>
 
-      <button mat-menu-item (click)="doNothing()">
-        <mat-icon >
-          <i class="material-icons">delete</i>
-        </mat-icon>
-        <span>
-         Delete
-        </span>
-      </button>
 
-      <button mat-menu-item (click)="doNothing()">
-        <mat-icon >
-          <i class="material-icons">edit</i>
-        </mat-icon>
-        <span>
-         Edit
-        </span>
-      </button>
-    </mat-menu>
-
-  </section>
-  <section>
-    aaa {{data}} bbb
-  </section>
-
-</mat-toolbar>
-
-<div class="main-display">
+<div class="main-display-section">
 
   <router-outlet></router-outlet>
 

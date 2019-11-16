@@ -1,0 +1,25 @@
+<div class="main-edit-body">
+
+  <div class="edit-content-container">
+    <mat-form-field>
+      <input #categoryName="ngModel"  matInput type="text" placeholder="Category name" [(ngModel)]="categoryValue"
+             [disabled]="!isEditMode()">
+    </mat-form-field>
+
+    <div class="error-message-section" [style.visibility]="( categoryName.dirty && isEditMode() && categoryExists)?'visible':'hidden'">
+      Category name already exists
+    </div>
+
+    <div class="buttons-container">
+      <button mat-raised-button color="basic" (click)="backToList()">
+        {{isEditMode() ? 'Cancel' : 'Retuen to list'}}
+      </button>
+      <button mat-raised-button color="primary" (click)="submit()" *ngIf="isEditMode()"
+              [disabled]="!categoryName.value || categoryAlreadyExist( categoryName.value )"
+              class="schedule-course-button">
+        Submit
+      </button>
+    </div>
+  </div>
+
+</div>

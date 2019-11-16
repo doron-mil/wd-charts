@@ -1,0 +1,28 @@
+.main-edit-body {
+  height: 50%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+  .edit-content-container {
+    width: 60%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+    .error-message-section{
+      color: red;
+      font-size: x-small;
+    }
+
+    .buttons-container {
+      display: flex;
+      justify-content: flex-end;
+
+      BUTTON{
+        margin-left: 2vw;
+      }
+    }
+  }
+}

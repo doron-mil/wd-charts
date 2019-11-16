@@ -1,26 +1,23 @@
 import {Component} from '@angular/core';
 import {NgRedux} from '@angular-redux/store';
+
+import {BaseComponent} from './shared/baseComponent';
 import {ActionGenerator} from './store/actions/action';
-import {StoreDataTypeEnum} from './store/storeDataTypeEnum';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  title = 'welldone';
-  data: any;
+export class AppComponent extends BaseComponent {
 
 
-  constructor(private ngRedux: NgRedux<any>) {
-    this.ngRedux.select([StoreDataTypeEnum.STATIC_DATA, 'data']).subscribe((ddd) => {
-      console.log( ddd)
-      this.data = ddd;
-    });
+  constructor(protected ngRedux: NgRedux<any>) {
+    super();
   }
 
-  doNothing() {
-    this.ngRedux.dispatch(ActionGenerator.setBasicData(4));
+  hookOnInit() {
+    this.ngRedux.dispatch(ActionGenerator.restoreStore());
   }
+
 }

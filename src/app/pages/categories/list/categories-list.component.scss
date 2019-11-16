@@ -1,0 +1,49 @@
+@import "src/assets/styles/variables";
+
+.categories-list-body {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .categories-list-container {
+    width: 80%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+
+    .categories-list-header {
+      width: 100%;
+      height: 10%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 2px groove lightgoldenrodyellow;
+    }
+
+    .categories-list {
+      box-shadow: blue;
+      width: 100%;
+      height: 90%;
+      overflow-y: auto;
+
+      .list-item-class {
+        border-bottom: 1px solid gray;
+
+        &:not(.selected-category  ) {
+          cursor: pointer;
+        }
+
+        &:hover:not(.selected-category  ) {
+          border-bottom: 1px solid blue;
+          font-weight: bolder;
+          color: blue;
+        }
+      }
+
+      .selected-category {
+        background-color: $header-color;
+      }
+    }
+  }
+}
