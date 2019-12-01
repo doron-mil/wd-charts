@@ -10,6 +10,7 @@ const routes: Routes = [
   {path: 'mainPage', component: MainPageComponent},
   {path: 'categoriesList', component: CategoriesListComponent},
   {path: 'categoryCreate', component: CategoryEditComponent},
+  {path: 'categoryCreate2', component: CategoryEditComponent},
   {path: 'categoryEdit', component: CategoryEditComponent},
   {path: 'categoryView', component: CategoryEditComponent},
 ];
