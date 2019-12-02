@@ -6,6 +6,10 @@ export interface AppAction extends Action {
   payload: any;
 }
 
+export enum ActionFeaturesEnum {
+  API_DATA = '[API_DATA]',
+}
+
 export enum ActionTypesEnum {
   DUMMY_ACTION = 'DUMMY_ACTION',
   BASIC = 'BASIC',
@@ -20,6 +24,9 @@ export enum ActionTypesEnum {
   DELETE_CATEGORY = 'DELETE_CATEGORY',
   UPDATE_CATEGORY = 'UPDATE_CATEGORY',
   CATEGORY_WAS_SELECTED = 'CATEGORY_WAS_SELECTED',
+
+  GET_API_DATA = 'GET_API_DATA',
+  SET_API_DATA_TO_STORE = 'SET_API_DATA_TO_STORE',
 }
 
 export class ActionGenerator {
@@ -73,5 +80,16 @@ export class ActionGenerator {
     type: ActionTypesEnum.CATEGORY_WAS_SELECTED,
     payload: aCategory,
   });
+
+
+  static getApiData = () => ({
+    type: ActionTypesEnum.GET_API_DATA,
+  });
+
+  static setApiDataToStore = (aApiData: any) => ({
+    type: ActionTypesEnum.SET_API_DATA_TO_STORE,
+    payload: aApiData,
+  });
+
 
 }

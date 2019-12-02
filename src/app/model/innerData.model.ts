@@ -1,6 +1,7 @@
 export enum PageEnum {
   NO_PAGE = '',
   MAIN_PAGE = 'mainPage',
+  CHARTS_NG2 = 'chartNg2Page',
   CATEGORIES_LIST = 'categoriesList',
   CATEGORY_CREATE = 'categoryCreate',
   CATEGORY_EDIT = 'categoryEdit',

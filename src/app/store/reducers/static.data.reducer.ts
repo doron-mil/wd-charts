@@ -7,7 +7,7 @@ export function staticDataReducer(state: StaticDataState = INITIAL_STATIC_DATA_S
 
   switch (action.type) {
     case ActionTypesEnum.RESTORE_STORE:
-      const restoredData = action.payload;
+      const restoredData = action.payload ? action.payload.staticData : null;
       let newState = state;
       if (restoredData) {
         newState = restoredData;

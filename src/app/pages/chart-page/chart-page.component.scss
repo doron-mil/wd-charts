@@ -1,0 +1,21 @@
+.chart-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+::ng-deep {
+  .refline-path.gridline-path-horizontal {
+    stroke: red!important;
+    stroke-dasharray: 6 10!important;
+    stroke-width: 3px!important;
+  }
+
+  .refline-label {
+    font-size: 28px!important;
+    color: yellow!important;
+    stroke: yellow!important;
+    stroke: yellow!important;
+  }
+}

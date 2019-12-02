@@ -1,0 +1,29 @@
+<div class="chart-col">
+  <div style="position: absolute; top: 50px; left: 50px; right: 50px; bottom: 50px;">
+    <ngx-charts-line-chart
+      [view]="view"
+      [scheme]="colorScheme"
+      [results]="multi2"
+      [gradient]="gradient"
+      [xAxis]="showXAxis"
+      [yAxis]="showYAxis"
+      [legend]="showLegend"
+      [showXAxisLabel]="showXAxisLabel"
+      [showYAxisLabel]="showYAxisLabel"
+      [xAxisLabel]="xAxisLabel"
+      [yAxisLabel]="yAxisLabel"
+      (select)="onSelect($event)"
+
+      [referenceLines]="referenceLines"
+      showRefLines="true"
+
+
+      gradient="true"
+      timeline="true"
+    >
+
+    </ngx-charts-line-chart>
+<!--     [customColors]="customColorsFunc"-->
+
+  </div>
+</div>
