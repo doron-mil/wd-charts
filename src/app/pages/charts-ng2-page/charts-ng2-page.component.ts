@@ -63,7 +63,8 @@ export class ChartsNg2PageComponent extends BaseComponent {
   protected listenForUpdates() {
     this.symbolControl.valueChanges
       .pipe(
-        takeUntil(this.onDestroy$)
+        takeUntil(this.onDestroy$),
+        debounceTime( 1000 )
       )
       .subscribe((value => {
         setTimeout(() => {
@@ -79,22 +80,7 @@ export class ChartsNg2PageComponent extends BaseComponent {
         filter(monthlyTimeSeries => !!monthlyTimeSeries)
       )
       .subscribe((monthlyTimeSeries: any) => {
-        this.dataArray = [];
-        let minMoment = moment('3000', 'YYYY');
-        let maxMoment = moment(0);
-        Object.entries(monthlyTimeSeries).forEach(entry => {
-          const entryMoment = moment(entry[0], 'YYYY-MM-DD');
-          maxMoment = moment.max(entryMoment, maxMoment);
-          minMoment = moment.min(entryMoment, minMoment);
-          const key = entryMoment.format(MONTH_YEAR_FORMAT);
-          const value = _.toNumber(_.get(entry[1], '2. high'));
-          this.dataArray.push({key, value});
-        });
-        minMoment.startOf('month');
-        maxMoment.endOf('month');
-        this.minDate = minMoment.toDate();
-        this.maxDate = maxMoment.toDate();
-
+        this.buildDataStructureFromRawApi(monthlyTimeSeries);
         this.buildChartData();
       });
 
@@ -121,13 +107,30 @@ export class ChartsNg2PageComponent extends BaseComponent {
 
   protected hookOnInit() {
     const pageData: PageMetaData = {
-      name: `Charts Ng2 Page`,
+      name: `Charts Page`,
       page: PageEnum.CHARTS_NG2,
       actions: []
     };
     this.ngRedux.dispatch(ActionGenerator.currentPageChanged(pageData));
   }
 
+  private buildDataStructureFromRawApi(aRawApiData: any) {
+    this.dataArray = [];
+    let minMoment = moment('3000', 'YYYY');
+    let maxMoment = moment(0);
+    Object.entries(aRawApiData).forEach(entry => {
+      const entryMoment = moment(entry[0], 'YYYY-MM-DD');
+      maxMoment = moment.max(entryMoment, maxMoment);
+      minMoment = moment.min(entryMoment, minMoment);
+      const key = entryMoment.format(MONTH_YEAR_FORMAT);
+      const value = _.toNumber(_.get(entry[1], '2. high'));
+      this.dataArray.push({key, value});
+    });
+    minMoment.startOf('month');
+    maxMoment.endOf('month');
+    this.minDate = minMoment.toDate();
+    this.maxDate = maxMoment.toDate();
+  }
 
   private buildChartData() {
     if (!this.dataArray || this.dataArray.length <= 0) {
@@ -149,7 +152,8 @@ export class ChartsNg2PageComponent extends BaseComponent {
       if (elementMoment.isAfter(endMoment)) {
         return true;
       }
-      this.chartsProperties.lineChartLabels.unshift(dataElement.key);
+      const label = this.itemsCount4Display <= 60 ||  (counter % 2) === 0 ? dataElement.key : '';
+      this.chartsProperties.lineChartLabels.unshift(label);
       const value = dataElement.value;
       this.chartsProperties.lineChartData[0].data.unshift(value);
       this.minValue = Math.min(this.minValue, value);
@@ -165,6 +169,10 @@ export class ChartsNg2PageComponent extends BaseComponent {
   }
 
   private postBuildChartAccordingToData() {
+    const pointRadius = Math.max( 8 - Math.floor( this.itemsCount4Display / 20 ));
+    this.chartsProperties.lineChartData[0].pointRadius = pointRadius
+    this.chartsProperties.lineChartData[0].pointBorderWidth = Math.max( 1, Math.floor(pointRadius /2) )
+
     this.chartsProperties.lineChartOptions.annotation.annotations[0].value = this.threshold;
     const formattedThreshold = Math.round(this.threshold * 10) / 10;
     this.chartsProperties.lineChartOptions.annotation.annotations[0].label.content = `Threshold (${formattedThreshold})`;
@@ -227,4 +235,5 @@ export class ChartsNg2PageComponent extends BaseComponent {
       this.dataService.getDataIntoStore(this.lastSelectedSymbol);
     }
   }
+
 }

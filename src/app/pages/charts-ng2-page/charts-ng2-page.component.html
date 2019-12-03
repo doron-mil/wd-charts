@@ -1,59 +1,81 @@
 <div class="chart-page-container">
   <div class="chart-controls-container">
-    <button mat-raised-button color="primary" (click)="getApiData()"
-            class="header-button">
-      Get Data
-    </button>
 
-    <mat-checkbox [(ngModel)]="displayThreshold"
-                  (ngModelChange)="displayThresholdChanged($event)">
-      Show Threshold
-    </mat-checkbox>
+    <div class="left-side-container">
+      <div class="symbol-selection-container">
+        <div>
+          <input type="text" [formControl]="symbolControl" class="symbol-select-input"
+                 [placeholder]="selectedSymbol ? '' : 'Pick symbol'" [matTooltip]="selectedSymbol?.symbol"
+                 [matAutocomplete]="symbolsAuto" [value]="selectedSymbol?.name">
+          <mat-autocomplete #symbolsAuto="matAutocomplete" [displayWith]="displayFn"
+                            (opened)="symbolSelected2(true)"
+                            (optionSelected)="symbolSelected($event)">
+            <mat-option *ngFor="let symbolRecord of filteredSymbolsOptions | async"
+                        [value]="symbolRecord">
+              {{symbolRecord.symbol}}
+            </mat-option>
+          </mat-autocomplete>
+        </div>
+        <div style="max-width: 60%" [matTooltip]="selectedSymbol?.name">
+          {{ selectedSymbol ? selectedSymbol.name : ''}}
+        </div>
 
-    <mat-form-field>
-      <input matInput type="number" [(ngModel)]="threshold" [disabled]="!displayThreshold"
-           [min]="minValue" [max]="maxValue" (ngModelChange)="thresholdChanged($event)">
-</mat-form-field>
+      </div>
 
-    <span class="end-date-display">
-    {{ endDate ? (endDate | date : 'MM/yy') : '...' }}
-      </span>
-    <mat-form-field class="end-date-from-field">
-      <input matInput [matDatepicker]="picker" readonly="true"
-             [(ngModel)]="endDate" (ngModelChange)="pickMonth($event)"
-             [min]="minDate" [max]="maxDate" [placeholder]="endDate ? '' :'Choose end date'">
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker startView="year"
-                      (monthSelected)="pickMonth($event);picker.close()" #picker></mat-datepicker>
-    </mat-form-field>
+      <div class="charts-parameters-container" *ngIf="this.dataArray?.length > 0">
 
-    <BR>
-    <mat-form-field>
-      <mat-select [(value)]="itemsCount4Display" (selectionChange)="onItemsCount4DisplayChange($event)">
-        <mat-option *ngFor="let itemsCount of itemsCount4DisplayOptions" [value]="itemsCount">
-          {{ itemsCount}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+        <div class="till-date-container">
+          <div>Till date :</div>
+          <div class="end-date-display" (click)="picker.open()">
+            {{ endDate ? (endDate | date : 'MM/yy') : '...' }}
+          </div>
+          <mat-form-field class="end-date-from-field">
+            <input matInput [matDatepicker]="picker" readonly="true"
+                   [(ngModel)]="endDate" (ngModelChange)="pickMonth($event)"
+                   [min]="minDate" [max]="maxDate" [placeholder]="endDate ? '' :'Choose end date'">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker startView="year"
+                            (monthSelected)="pickMonth($event);picker.close()">
+            </mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <div class="record-count-container">
+          <div>Records count :</div>
+          <mat-form-field>
+            <mat-select [(value)]="itemsCount4Display" (selectionChange)="onItemsCount4DisplayChange($event)">
+              <mat-option *ngFor="let itemsCount of itemsCount4DisplayOptions" [value]="itemsCount">
+                {{ itemsCount}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="right-side-container">
+      <div class="threshold-container" *ngIf="this.dataArray?.length > 0">
+        <span>Threshold</span>
+        <mat-checkbox [(ngModel)]="displayThreshold"
+                      (ngModelChange)="displayThresholdChanged($event)">
+          Display
+        </mat-checkbox>
+        <input type="number" class="threshold-input" [(ngModel)]="threshold"
+               *ngIf="displayThreshold"
+               [min]="minValue" [max]="maxValue" (ngModelChange)="thresholdChanged($event)">
+      </div>
+
+    </div>
 
 
-    <input type="text" placeholder="Pick one"  [formControl]="symbolControl"
-             [matAutocomplete]="symbolsAuto" [value]="selectedSymbol?.name">
-      <mat-autocomplete #symbolsAuto="matAutocomplete" [displayWith]="displayFn"
-                        (opened)="symbolSelected2(true)"
-                        (optionSelected)="symbolSelected($event)">
-        <mat-option *ngFor="let symbolRecord of filteredSymbolsOptions | async"
-                    [value]="symbolRecord" >
-          {{symbolRecord.symbol}}
-        </mat-option>
-      </mat-autocomplete>
-    {{ selectedSymbol ? selectedSymbol.name : ''}}
   </div>
 
   <div class="chart-container">
-    <span *ngIf="!this.dataArray|| this.dataArray?.length === 0">
-      NO DATA
-    </span>
+    <div class="no-data-container" *ngIf="!this.dataArray|| this.dataArray?.length === 0">
+      <div>NO DATA - PLEASE PICK A SYMBOL</div>
+    </div>
     <canvas baseChart *ngIf="this.dataArray?.length > 0"
             [datasets]="chartsProperties.lineChartData"
             [labels]="chartsProperties.lineChartLabels"

@@ -6,6 +6,7 @@ import {ActionFeaturesEnum, ActionGenerator, ActionTypesEnum,} from '../../actio
 import {API_ERROR, API_SUCCESS, apiRequest} from '../../actions/api.actions';
 import {StoreDataTypeEnum} from '../../storeDataTypeEnum';
 import {SymbolRecord} from '../../../model/innerData.model';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 const apiKey = 'FBOX5AT53LMZJ788';
 const GET_API_BASE_URL = `https://www.alphavantage.co/query?apikey=${apiKey}&function=`;
@@ -14,7 +15,7 @@ const GET_API_DATA_URL = (symbol) => `${GET_API_BASE_URL}TIME_SERIES_MONTHLY&sym
 
 @Injectable()
 export class ReduxGeneralMiddlewareService {
-  constructor() {
+  constructor(private snackBar: MatSnackBar) {
   }
 
   generalMiddleware = ({getState, dispatch}) => (next) => (action) => {
@@ -43,9 +44,15 @@ export class ReduxGeneralMiddlewareService {
         );
         break;
       case `${ActionFeaturesEnum.API_DATA} ${API_SUCCESS}`:
-        next(
-          ActionGenerator.setApiDataToStore(action.payload)
-        );
+        if (_.get(action.payload, 'Monthly Time Series')) {
+          next(
+            ActionGenerator.setApiDataToStore(action.payload)
+          );
+        } else if (action.payload.Note) {
+          this.tooMuchTransactionsMessage(action.payload);
+        } else {
+          console.error(`General Error in ${ActionFeaturesEnum.API_DATA} ${API_SUCCESS} : `, action.payload);
+        }
         break;
       case ActionTypesEnum.GET_API_SYMBOLS_DATA :
         next(
@@ -64,15 +71,34 @@ export class ReduxGeneralMiddlewareService {
         //   7. timezone: "UTC-05"
         //   8. currency: "USD"
         //   9. matchScore: "1.0000" } ... ]
-        const symbolsArray = action.payload.bestMatches.map(value => SymbolRecord.getInstanceFromApi( value));
-        next(
-          ActionGenerator.setApiSymbolsDataToStore(symbolsArray)
-        );
+        if (action.payload.bestMatches && Array.isArray(action.payload.bestMatches)) {
+          const symbolsArray = action.payload.bestMatches.map(value => SymbolRecord.getInstanceFromApi(value));
+          next(
+            ActionGenerator.setApiSymbolsDataToStore(symbolsArray)
+          );
+        } else if (action.payload.Note) {
+          this.tooMuchTransactionsMessage(action.payload);
+        } else {
+          console.error(`General Error in ${ActionFeaturesEnum.API_SYMBOL_DATA} ${API_SUCCESS} : `, action.payload);
+        }
         break;
     }
 
     if (action.type.includes(API_ERROR)) {
+      this.snackBar.open('Failed to retrieve data from the internet', null, {
+        duration: 7000,
+        panelClass: 'snackBarClass',
+      });
       console.error('Error in  processing API middleware : ', action);
     }
   };
+
+  private tooMuchTransactionsMessage(aApiRes) {
+    console.error('API vendor returned failed response : ', aApiRes);
+    this.snackBar.open('Probably too many api calls - Exceeded the policy', null, {
+      duration: 7000,
+      panelClass: 'snackBarClass',
+    });
+
+  }
 }

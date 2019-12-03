@@ -22,7 +22,7 @@ export class ChartsProperties {
   lineChartData: ChartDataSets[] = [
     {
       data: [],
-      label: 'Series A',
+      label: '',
       lineTension: 0,
       fill: false,
       pointBorderWidth: 4,
@@ -59,8 +59,8 @@ export class ChartsProperties {
       xAxes: [{
         ticks: {
           autoSkip: false,
-          maxRotation: 90,
-          minRotation: 90
+          maxRotation: 60,
+          minRotation: 60
         }
       }],
       yAxes: [
