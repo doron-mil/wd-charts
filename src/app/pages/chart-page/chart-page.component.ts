@@ -141,7 +141,6 @@ export class ChartPageComponent implements OnInit {
 
   customColorsFunc = (value) => {
     const color = value > 40 ? '#FF0000' : '#0000FF';
-    console.log('3333', value ,color);
     return color;
   };
 
@@ -150,8 +149,6 @@ export class ChartPageComponent implements OnInit {
     Array(100).fill(null).forEach((val, i) => {
       this.multi2[0].series.push({name: `${i}`, value: _.random(100)});
     });
-
-    console.log('11111', this.multi2);
   }
 
   ngOnInit() {
@@ -159,6 +156,5 @@ export class ChartPageComponent implements OnInit {
   }
 
   onSelect($event: {}) {
-    console.log('1111', $event);
   }
 }

@@ -15,6 +15,9 @@ export function innerReducer(state: InnerDataState = INITIAL_INNER_DATA_STATE,
       return state;
     case ActionTypesEnum.EMIT_ACTION:
       return Object.assign({}, state, {lastEmittedAction: action.payload});
+    case ActionTypesEnum.SET_API_DATA_SYMBOLS_TO_STORE:
+      state.symbols = action.payload;
+      return state;
     default:
       return Object.assign({}, state);
   }

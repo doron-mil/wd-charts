@@ -14,6 +14,9 @@ export function dynamicDataReducer(state: DynamicDataState = INITIAL_DYNAMIC_DAT
     case ActionTypesEnum.SET_API_DATA_TO_STORE:
       state.apiData = action.payload;
       return state;
+    case ActionTypesEnum.SET_SELECTED_SYMBOL:
+      state.selectedSymbol = action.payload;
+      return state;
     default:
       return Object.assign({}, state);
   }

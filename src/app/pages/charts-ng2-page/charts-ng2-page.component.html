@@ -10,11 +10,13 @@
       Show Threshold
     </mat-checkbox>
 
-    <input type="number" [(ngModel)]="threshold" [disabled]="!displayThreshold"
+    <mat-form-field>
+      <input matInput type="number" [(ngModel)]="threshold" [disabled]="!displayThreshold"
            [min]="minValue" [max]="maxValue" (ngModelChange)="thresholdChanged($event)">
+</mat-form-field>
 
     <span class="end-date-display">
-    {{ endDate ? (endDate | date : 'MM/yy' ): '...' }}
+    {{ endDate ? (endDate | date : 'MM/yy') : '...' }}
       </span>
     <mat-form-field class="end-date-from-field">
       <input matInput [matDatepicker]="picker" readonly="true"
@@ -25,17 +27,41 @@
                       (monthSelected)="pickMonth($event);picker.close()" #picker></mat-datepicker>
     </mat-form-field>
 
+    <BR>
+    <mat-form-field>
+      <mat-select [(value)]="itemsCount4Display" (selectionChange)="onItemsCount4DisplayChange($event)">
+        <mat-option *ngFor="let itemsCount of itemsCount4DisplayOptions" [value]="itemsCount">
+          {{ itemsCount}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+
+    <input type="text" placeholder="Pick one"  [formControl]="symbolControl"
+             [matAutocomplete]="symbolsAuto" [value]="selectedSymbol?.name">
+      <mat-autocomplete #symbolsAuto="matAutocomplete" [displayWith]="displayFn"
+                        (opened)="symbolSelected2(true)"
+                        (optionSelected)="symbolSelected($event)">
+        <mat-option *ngFor="let symbolRecord of filteredSymbolsOptions | async"
+                    [value]="symbolRecord" >
+          {{symbolRecord.symbol}}
+        </mat-option>
+      </mat-autocomplete>
+    {{ selectedSymbol ? selectedSymbol.name : ''}}
   </div>
 
   <div class="chart-container">
-    <canvas baseChart
-            [datasets]="lineChartData"
-            [labels]="lineChartLabels"
-            [options]="lineChartOptions"
-            [colors]="lineChartColors"
-            [legend]="lineChartLegend"
-            [chartType]="lineChartType"
-            [plugins]="lineChartPlugins">
+    <span *ngIf="!this.dataArray|| this.dataArray?.length === 0">
+      NO DATA
+    </span>
+    <canvas baseChart *ngIf="this.dataArray?.length > 0"
+            [datasets]="chartsProperties.lineChartData"
+            [labels]="chartsProperties.lineChartLabels"
+            [options]="chartsProperties.lineChartOptions"
+            [colors]="chartsProperties.lineChartColors"
+            [legend]="chartsProperties.lineChartLegend"
+            [chartType]="chartsProperties.lineChartType"
+            [plugins]="chartsProperties.lineChartPlugins">
     </canvas>
   </div>
 </div>

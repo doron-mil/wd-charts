@@ -1,5 +1,5 @@
 import {Action} from 'redux';
-import {CategoryUpdate, PageAction, PageMetaData} from '../../model/innerData.model';
+import {CategoryUpdate, PageAction, PageMetaData, SymbolRecord} from '../../model/innerData.model';
 import {StaticDataState} from '../states/static.data.state';
 
 export interface AppAction extends Action {
@@ -8,6 +8,7 @@ export interface AppAction extends Action {
 
 export enum ActionFeaturesEnum {
   API_DATA = '[API_DATA]',
+  API_SYMBOL_DATA = '[API_SYMBOL_DATA]',
 }
 
 export enum ActionTypesEnum {
@@ -27,6 +28,9 @@ export enum ActionTypesEnum {
 
   GET_API_DATA = 'GET_API_DATA',
   SET_API_DATA_TO_STORE = 'SET_API_DATA_TO_STORE',
+  GET_API_SYMBOLS_DATA = 'GET_API_SYMBOLS_DATA',
+  SET_API_DATA_SYMBOLS_TO_STORE = 'SET_API_DATA_SYMBOLS_TO_STORE',
+  SET_SELECTED_SYMBOL = 'SET_SELECTED_SYMBOL',
 }
 
 export class ActionGenerator {
@@ -82,8 +86,9 @@ export class ActionGenerator {
   });
 
 
-  static getApiData = () => ({
+  static getApiData = (aSymbol: string) => ({
     type: ActionTypesEnum.GET_API_DATA,
+    payload: aSymbol,
   });
 
   static setApiDataToStore = (aApiData: any) => ({
@@ -91,5 +96,19 @@ export class ActionGenerator {
     payload: aApiData,
   });
 
+  static getApiSymbolsData = (aKeywords: string) => ({
+    type: ActionTypesEnum.GET_API_SYMBOLS_DATA,
+    payload: aKeywords,
+  });
+
+  static setApiSymbolsDataToStore = (aSymbolsArray: SymbolRecord[]) => ({
+    type: ActionTypesEnum.SET_API_DATA_SYMBOLS_TO_STORE,
+    payload: aSymbolsArray,
+  });
+
+  static setSelectedSymbol = (aSelectedSymbolRecord: SymbolRecord) => ({
+    type: ActionTypesEnum.SET_SELECTED_SYMBOL,
+    payload: aSelectedSymbolRecord,
+  });
 
 }

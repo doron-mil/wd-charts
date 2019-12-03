@@ -8,8 +8,7 @@ import {ChartPageComponent} from './pages/chart-page/chart-page.component';
 import {ChartsNg2PageComponent} from './pages/charts-ng2-page/charts-ng2-page.component';
 
 const routes: Routes = [
-  {path: '', pathMatch: 'full', redirectTo: 'mainPage'},
-  {path: 'mainPage', redirectTo: 'chartNg2Page'},
+  {path: '', pathMatch: 'full', redirectTo: 'chartNg2Page'},
   {path: 'mainPageObsolete', component: MainPageComponent},
   {path: 'chartPage', component: ChartPageComponent},
   {path: 'chartNg2Page', component: ChartsNg2PageComponent},

@@ -10,8 +10,7 @@ export class DataService {
   constructor(private ngRedux: NgRedux<any>) {
   }
 
-  getDataIntoStore() {
-    console.log( 'mmmm')
-    this.ngRedux.dispatch(ActionGenerator.getApiData());
+  getDataIntoStore(aSymbol: string) {
+    this.ngRedux.dispatch(ActionGenerator.getApiData(aSymbol));
   }
 }

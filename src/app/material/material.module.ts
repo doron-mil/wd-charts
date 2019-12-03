@@ -22,6 +22,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatTreeModule} from '@angular/material/tree';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 @NgModule({
   imports: [
@@ -50,6 +51,7 @@ import {MatNativeDateModule} from '@angular/material/core';
     MatBottomSheetModule,
     MatNativeDateModule,
     MatDatepickerModule,
+    MatAutocompleteModule,
   ],
 })
 export class MaterialModule {

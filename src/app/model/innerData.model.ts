@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 export enum PageEnum {
   NO_PAGE = '',
   MAIN_PAGE = 'mainPage',
@@ -36,11 +38,23 @@ export class PageMetaData {
 }
 
 export class CategoryUpdate {
-  currentCategory:string;
-  newCategory:string;
+  currentCategory: string;
+  newCategory: string;
 
   constructor(currentCategory: string, newCategory: string) {
     this.currentCategory = currentCategory;
     this.newCategory = newCategory;
+  }
+}
+
+export class SymbolRecord {
+  symbol: string;
+  name: string;
+
+  static getInstanceFromApi(aApiRecord: any) {
+    const newSymbolRecord = new SymbolRecord();
+    newSymbolRecord.symbol = _.get(aApiRecord, '1. symbol');
+    newSymbolRecord.name = _.get(aApiRecord, '2. name');
+    return newSymbolRecord;
   }
 }
