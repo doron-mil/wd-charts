@@ -8,7 +8,6 @@ import {BaseComponent} from '../../shared/baseComponent';
 import {PageAction, PageMetaData} from '../../model/innerData.model';
 import {StoreDataTypeEnum} from '../../store/storeDataTypeEnum';
 import {ActionGenerator} from '../../store/actions/action';
-import {DataService} from '../../services/data.service';
 
 @Component({
   selector: 'app-header',
@@ -20,7 +19,6 @@ export class HeaderComponent extends BaseComponent {
   pageData: PageMetaData = new PageMetaData();
 
   constructor(protected ngRedux: NgRedux<any>,
-              private dataService: DataService,
               protected router: Router) {
     super();
   }
@@ -64,9 +62,5 @@ export class HeaderComponent extends BaseComponent {
 
   saveStore() {
     this.ngRedux.dispatch(ActionGenerator.saveStore());
-  }
-
-  getApiData() {
-    this.dataService.getDataIntoStore();
   }
 }

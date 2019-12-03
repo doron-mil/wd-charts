@@ -1,11 +1,41 @@
-<div style="display: block;" class="chart-container">
-  <canvas baseChart
-    [datasets]="lineChartData"
-    [labels]="lineChartLabels"
-    [options]="lineChartOptions"
-    [colors]="lineChartColors"
-    [legend]="lineChartLegend"
-    [chartType]="lineChartType"
-    [plugins]="lineChartPlugins">
-  </canvas>
+<div class="chart-page-container">
+  <div class="chart-controls-container">
+    <button mat-raised-button color="primary" (click)="getApiData()"
+            class="header-button">
+      Get Data
+    </button>
+
+    <mat-checkbox [(ngModel)]="displayThreshold"
+                  (ngModelChange)="displayThresholdChanged($event)">
+      Show Threshold
+    </mat-checkbox>
+
+    <input type="number" [(ngModel)]="threshold" [disabled]="!displayThreshold"
+           [min]="minValue" [max]="maxValue" (ngModelChange)="thresholdChanged($event)">
+
+    <span class="end-date-display">
+    {{ endDate ? (endDate | date : 'MM/yy' ): '...' }}
+      </span>
+    <mat-form-field class="end-date-from-field">
+      <input matInput [matDatepicker]="picker" readonly="true"
+             [(ngModel)]="endDate" (ngModelChange)="pickMonth($event)"
+             [min]="minDate" [max]="maxDate" [placeholder]="endDate ? '' :'Choose end date'">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker startView="year"
+                      (monthSelected)="pickMonth($event);picker.close()" #picker></mat-datepicker>
+    </mat-form-field>
+
+  </div>
+
+  <div class="chart-container">
+    <canvas baseChart
+            [datasets]="lineChartData"
+            [labels]="lineChartLabels"
+            [options]="lineChartOptions"
+            [colors]="lineChartColors"
+            [legend]="lineChartLegend"
+            [chartType]="lineChartType"
+            [plugins]="lineChartPlugins">
+    </canvas>
+  </div>
 </div>

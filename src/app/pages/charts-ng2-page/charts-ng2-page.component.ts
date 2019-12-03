@@ -1,14 +1,27 @@
-import {Component, OnInit} from '@angular/core';
-import {ChartDataSets, ChartOptions} from 'chart.js';
-import {Color, Label} from 'ng2-charts';
-import * as pluginAnnotations from 'chartjs-plugin-annotation';
-import * as _ from 'lodash';
-import {BaseComponent} from '../../shared/baseComponent';
+import {Component} from '@angular/core';
 import {NgRedux} from '@angular-redux/store';
-import {PageAction, PageEnum, PageMetaData} from '../../model/innerData.model';
+import {debounceTime, takeUntil} from 'rxjs/operators';
+
+import * as _ from 'lodash';
+import * as moment from 'moment';
+
+import {Color, Label} from 'ng2-charts';
+import {ChartDataSets, ChartOptions} from 'chart.js';
+import * as pluginAnnotations from 'chartjs-plugin-annotation';
+
+import {BaseComponent} from '../../shared/baseComponent';
+import {PageEnum, PageMetaData} from '../../model/innerData.model';
 import {ActionGenerator} from '../../store/actions/action';
 import {StoreDataTypeEnum} from '../../store/storeDataTypeEnum';
-import {takeUntil} from 'rxjs/operators';
+import {DataService} from '../../services/data.service';
+import {Subject} from 'rxjs';
+
+interface IDataElement {
+  key: string;
+  value: number;
+}
+
+const MONTH_YEAR_FORMAT = 'MM/YY';
 
 @Component({
   selector: 'app-charts-ng2-page',
@@ -16,10 +29,23 @@ import {takeUntil} from 'rxjs/operators';
   styleUrls: ['./charts-ng2-page.component.scss']
 })
 export class ChartsNg2PageComponent extends BaseComponent {
+
+  dataArray: IDataElement[];
+  threshold: number;
+  thresholdObservable = new Subject<number>();
+
+  displayThreshold = true;
+  minValue: number;
+  maxValue: number;
+
+  endDate: Date = moment().endOf('month').toDate();
+  minDate: Date;
+  maxDate: Date;
+
   public lineChartPlugins = [pluginAnnotations];
   public lineChartData: ChartDataSets[] = [
     {
-      data: [65, 59, 80, 81, 56, 55, 40],
+      data: [],
       label: 'Series A',
       lineTension: 0,
       fill: false,
@@ -32,47 +58,58 @@ export class ChartsNg2PageComponent extends BaseComponent {
 
   // lineTension: 0,
   public colorsArray: string[] = [];
-  public lineChartLabels: Label[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+  public lineChartLabels: Label[] = [];
+  public thresholdAnnotation = {
+    type: 'line',
+    mode: 'horizontal',
+    scaleID: 'y-axis-0',
+    value: '55',
+    borderColor: 'orange',
+    borderDash: [4, 2],
+    borderWidth: 2,
+    label: {
+      backgroundColor: 'white',
+      enabled: true,
+      position: 'right',
+      yAdjust: -20,
+      fontColor: 'blue',
+      content: 'Threshold'
+    },
+    // onMouseover: (e) => console.log(e),
+  };
   public lineChartOptions: (ChartOptions & { annotation: any }) = {
     responsive: true,
+    maintainAspectRatio: false,
     scales: {
       // We use this empty structure as a placeholder for dynamic theming.
-      xAxes: [{}],
+      xAxes: [{
+        ticks: {
+          autoSkip: false,
+          maxRotation: 90,
+          minRotation: 90
+        }
+      }],
       yAxes: [
         {
           id: 'y-axis-0',
           position: 'left',
         },
-        {
-          id: 'y-axis-1',
-          position: 'right',
-          gridLines: {
-            color: 'rgba(255,0,0,0.3)',
-          },
-          ticks: {
-            fontColor: 'red',
-          }
-        }
+        // {
+        //   id: 'y-axis-1',
+        //   position: 'right',
+        //   gridLines: {
+        //     color: 'rgba(255,0,0,0.3)',
+        //   },
+        //   ticks: {
+        //     fontColor: 'red',
+        //   }
+        // }
       ]
     },
     annotation: {
+      events: ['mouseover'],
       annotations: [
-        {
-          type: 'line',
-          mode: 'horizontal',
-          scaleID: 'y-axis-0',
-          value: '55',
-          borderColor: 'orange',
-          borderWidth: 8,
-          label: {
-            backgroundColor: 'white',
-            enabled: true,
-            position: 'right',
-            yAdjust: -20,
-            fontColor: 'blue',
-            content: 'Threshold'
-          }
-        },
+        this.thresholdAnnotation
       ],
     },
   };
@@ -83,41 +120,44 @@ export class ChartsNg2PageComponent extends BaseComponent {
       backgroundColor: 'rgba(255,0,0,0.3)',
     },
   ];
-  public lineChartLegend = true;
+  public lineChartLegend = false;
   public lineChartType = 'line';
 
-  constructor(private ngRedux: NgRedux<any>) {
+
+  constructor(private ngRedux: NgRedux<any>, private dataService: DataService) {
     super();
-
-    this.lineChartData[0].data = [];
-    this.lineChartLabels = [];
-    this.colorsArray = [];
-    this.lineChartColors[0].pointBackgroundColor = [];
-
-    Array(100).fill(null).forEach((val, i) => {
-      this.lineChartLabels.push(`${i}`);
-      const random = _.random(100);
-      // this.colorsArray.push( random > 50 ? 'black' : 'red');
-      this.colorsArray.push(random > 50 ? 'yellow' : 'red');
-      (this.lineChartColors[0].pointBackgroundColor as Array<string>).push(random > 50 ? 'yellow' : 'red');
-      this.lineChartData[0].data.push(random);
-    });
-
   }
 
   protected listenForUpdates() {
     this.ngRedux.select<any>([StoreDataTypeEnum.DYNAMIC_DATA, 'apiData', 'Monthly Time Series'])
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((monthlyTimeSeries: any) => {
-        const dataArray = [];
+        this.dataArray = [];
+        let minMoment = moment('3000', 'YYYY');
+        let maxMoment = moment(0);
         Object.entries(monthlyTimeSeries).forEach(entry => {
-          const tokenizeDArray = entry[0].split('-');
-          const key = {m: tokenizeDArray[1], y: tokenizeDArray[0]};
-          const value = _.get(entry[1], '2. high');
-          dataArray.push({key, value});
+          const entryMoment = moment(entry[0], 'YYYY-MM-DD');
+          maxMoment = moment.max(entryMoment, maxMoment);
+          minMoment = moment.min(entryMoment, minMoment);
+          const key = entryMoment.format(MONTH_YEAR_FORMAT);
+          const value = _.toNumber(_.get(entry[1], '2. high'));
+          this.dataArray.push({key, value});
         });
-        console.log('3333', dataArray);
+        minMoment.startOf('month');
+        maxMoment.endOf('month');
+        this.minDate = minMoment.toDate();
+        this.maxDate = maxMoment.toDate();
+
+        this.buildChartData();
       });
+
+    this.thresholdObservable.pipe(
+      takeUntil(this.onDestroy$),
+      debounceTime(1000)
+    ).subscribe((thresholdValue) => {
+      this.postBuildChartAccordingToData();
+      this.refreshTresholdLine();
+    });
   }
 
   protected hookOnInit() {
@@ -128,4 +168,83 @@ export class ChartsNg2PageComponent extends BaseComponent {
     };
     this.ngRedux.dispatch(ActionGenerator.currentPageChanged(pageData));
   }
+
+  private buildChartData() {
+    if (!this.dataArray || this.dataArray.length <= 0) {
+      console.error('No Data to show');
+      return;
+    }
+
+    this.lineChartData[0].data = [];
+    this.lineChartLabels = [];
+
+    const itemsCount4Display = 20;
+    this.minValue = Number.MAX_VALUE;
+    this.maxValue = 0;
+
+    const endMoment = moment(this.endDate);
+    let counter = 0;
+
+    this.dataArray.every((dataElement) => {
+      const elementMoment = moment(dataElement.key, MONTH_YEAR_FORMAT);
+      if (elementMoment.isAfter(endMoment)) {
+        return true;
+      }
+      this.lineChartLabels.unshift(dataElement.key);
+      const value = dataElement.value;
+      this.lineChartData[0].data.unshift(value);
+      this.minValue = Math.min(this.minValue, value);
+      this.maxValue = Math.max(this.maxValue, value);
+      counter++;
+      return counter < itemsCount4Display;
+    });
+
+    this.threshold = (this.minValue + this.maxValue) / 2;
+
+    this.postBuildChartAccordingToData();
+    this.displayThresholdChanged();
+  }
+
+  private postBuildChartAccordingToData() {
+    this.lineChartOptions.annotation.annotations[0].value = this.threshold;
+    const formattedThreshold = Math.round(this.threshold * 10) / 10;
+    this.lineChartOptions.annotation.annotations[0].label.content = `Threshold (${formattedThreshold})`;
+
+    this.lineChartColors[0].pointBackgroundColor = [];
+    this.lineChartData[0].data.forEach(value => {
+      (this.lineChartColors[0].pointBackgroundColor as Array<string>).push(value > this.threshold ? 'yellow' : 'red');
+    });
+  }
+
+  getApiData() {
+    this.dataService.getDataIntoStore();
+  }
+
+  displayThresholdChanged(aIsDisplayed: boolean = this.displayThreshold) {
+    if (aIsDisplayed) {
+      this.lineChartOptions.annotation.annotations.push(this.thresholdAnnotation);
+    } else {
+      this.lineChartOptions.annotation.annotations = [];
+    }
+
+    this.refreshTresholdLine();
+
+  }
+
+  thresholdChanged(aNewThresholdValue: number) {
+    this.thresholdObservable.next(aNewThresholdValue);
+    // console.log('1111', aNewThresholdValue);
+  }
+
+  private refreshTresholdLine() {
+    this.lineChartOptions = {...this.lineChartOptions};
+  }
+
+  pickMonth(aMontDate: Date) {
+    const compMoment = moment(aMontDate).endOf('month');
+    this.endDate = compMoment.toDate();
+
+    setTimeout(() => this.buildChartData());
+  }
+
 }

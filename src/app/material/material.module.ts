@@ -20,30 +20,12 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatTreeModule} from '@angular/material/tree';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material/core';
 
 @NgModule({
   imports: [
     BrowserAnimationsModule,
-    MatToolbarModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatSelectModule,
-    MatSliderModule,
-    MatSlideToggleModule,
-    MatTableModule,
-    MatTooltipModule,
-    MatTabsModule,
-    MatListModule,
-    MatSnackBarModule,
-    MatProgressSpinnerModule,
-    MatCardModule,
-    MatMenuModule,
-    MatIconModule,
-    MatDialogModule,
-    MatTreeModule,
-    MatBottomSheetModule,
   ],
   exports: [
     MatToolbarModule,
@@ -66,6 +48,8 @@ import {MatTreeModule} from '@angular/material/tree';
     MatDialogModule,
     MatTreeModule,
     MatBottomSheetModule,
+    MatNativeDateModule,
+    MatDatepickerModule,
   ],
 })
 export class MaterialModule {
